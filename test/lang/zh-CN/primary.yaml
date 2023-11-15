@@ -1,0 +1,28 @@
+test:
+  str1: 测试
+  str2: ceshi
+  num1: 123
+  # 123
+  # 123.456
+  num2: 123.456
+  # []int64{-1, -1}
+  # []string{"abc", "def"}
+  strList:
+    - abc
+    - def
+  # []int64{1, 2}
+  # []string{"1", "2"}
+  numList:
+    - 1
+    - 2
+  # 模板字符串测试
+  # "测试字符串1:测试"
+  temp_test1: 测试字符串1:${test.str1}
+  # "测试数字2:123.456"
+  temp_test2: 测试数字2:${test.num2}
+  # "测试按语言引用:测试 eng common_str"
+  temp_test3: 测试按语言引用:${zh-CN:test.str1} ${en:test.engOnlyStr} ${common:common.str1}
+  format_test: 参数%s 参数%d 参数%.1f 参数%v
+  first:
+    second:
+      third: 3level

@@ -1,0 +1,10 @@
+test:
+  refer: ${test.name}
+  str1: test1
+  num1: 654
+  num2: 654.321
+  strList:
+    - a
+    - b
+    - c
+  engOnlyStr: eng
