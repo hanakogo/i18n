@@ -165,7 +165,7 @@ i18n.Get[string]("main.test", func(value any) string {
 }, "def") // "12.3"
 ```
 
-### Get a Slice
+#### Get a Slice
 
 ```go
 // main:
@@ -175,7 +175,7 @@ i18n.Get[string]("main.test", func(value any) string {
 i18n.GetSlice[string]("main.list", i18n.ConvertString) // []string{"a", "b"}
 ```
 
-### Set default value
+#### Set default value
 
 ```go
 // all `getXX` functions are support default value (include translation func)
@@ -187,7 +187,7 @@ i18n.GetFloat("main.test", 1.0)
 i18n.GetSlice("main.test", i18n.ConvertString, []string{})
 ```
 
-### Translation mode
+#### Translation mode
 
 ```go
 // it's just a nice alias meaning that "get value from specified language"
@@ -204,7 +204,7 @@ i18n.GetStringTr("zh-CN", "main.test") // "测试"
 // same usage on GetInt64Tr(), GetFloatTr(), GetSliceTr(), GetValueTr()
 ```
 
-### Template string
+#### Template string
 
 ```go
 // zh-CN (Default language)
