@@ -15,6 +15,10 @@ test:
   numList:
     - 1
     - 2
+  objList:
+    - sublist:
+        - sublist_element1
+    - substr: substr
   # 模板字符串测试
   # "测试字符串1:测试"
   temp_test1: 测试字符串1:${test.str1}

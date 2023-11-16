@@ -71,39 +71,6 @@ func TestGet(t *testing.T) {
 		"banana",
 		value,
 	)
-
-	// test get slice
-	as.Eq(
-		[]string{"abc", "def"},
-		i18n.GetSlice[string]("test.strList", i18n.ConvertString),
-	)
-	as.Eq(
-		[]string{"1", "2"},
-		i18n.GetSlice[string]("test.numList", i18n.ConvertString),
-	)
-	as.Eq(
-		[]string{},
-		i18n.GetSlice[string]("test.strList.not.exist", i18n.ConvertString),
-	)
-
-	as.Eq(
-		[]int64{1, 2},
-		i18n.GetSlice[int64]("test.numList", i18n.ConvertInt64),
-	)
-	as.Eq(
-		[]int64{-1, -1},
-		i18n.GetSlice[int64]("test.strList", i18n.ConvertInt64),
-	)
-	as.Eq(
-		[]int64{},
-		i18n.GetSlice[int64]("test.numList.not.exist", i18n.ConvertInt64),
-	)
-
-	// by language
-	as.Eq(
-		[]string{"a", "b", "c"},
-		i18n.GetSliceTr[string]("en", "test.strList", i18n.ConvertString),
-	)
 }
 
 func TestMultiLevel(t *testing.T) {
@@ -176,5 +143,64 @@ func TestGetFloat(t *testing.T) {
 	as.Eq(
 		float64(-1),
 		i18n.GetFloat("test.str1"),
+	)
+}
+
+func TestGetSlice(t *testing.T) {
+	TestLoadEmbed(t)
+
+	as := assert.New(t)
+
+	// test get slice
+	as.Eq(
+		[]string{"abc", "def"},
+		i18n.GetSlice[string]("test.strList", i18n.ConvertString),
+	)
+	as.Eq(
+		[]string{"1", "2"},
+		i18n.GetSlice[string]("test.numList", i18n.ConvertString),
+	)
+	as.Eq(
+		[]string{},
+		i18n.GetSlice[string]("test.strList.not.exist", i18n.ConvertString),
+	)
+
+	as.Eq(
+		[]int64{1, 2},
+		i18n.GetSlice[int64]("test.numList", i18n.ConvertInt64),
+	)
+	as.Eq(
+		[]int64{-1, -1},
+		i18n.GetSlice[int64]("test.strList", i18n.ConvertInt64),
+	)
+	as.Eq(
+		[]int64{},
+		i18n.GetSlice[int64]("test.numList.not.exist", i18n.ConvertInt64),
+	)
+
+	// test get value from a slice
+	as.Eq(
+		int64(1),
+		i18n.GetInt64("test.numList[0]"),
+	)
+	as.Eq(
+		"abc",
+		i18n.GetString("test.strList[0]"),
+	)
+
+	// test get value from a sublist
+	as.Eq(
+		"sublist_element1",
+		i18n.GetString("test.objList[0].sublist[0]"),
+	)
+	as.Eq(
+		"substr",
+		i18n.GetString("test.objList[1].substr"),
+	)
+
+	// translation mode
+	as.Eq(
+		[]string{"a", "b", "c"},
+		i18n.GetSliceTr[string]("en", "test.strList", i18n.ConvertString),
 	)
 }

@@ -112,25 +112,28 @@ func (i *I18nFS) GetValByPath(lang string, path string) (any, error) {
 	// walk all nodes of path, unless last one
 	langMap := i.langStringMaps[lang]
 	for i := range paths[:len(paths)-1] {
-		value := langMap[paths[i]]
+		value := utils.TakeStringMap(&langMap, paths[i])
 
-		// take out a Map, then continue
-		if value, ok := value.(map[string]any); ok {
-			langMap = value
-		} else {
-			// can't take out a Map, so we can't continue to walk deeper structure
-			return "", fmt.Errorf(
-				"destination path[%s.<%s>.%s] isn't point to a object, can't continue to get value",
-				strutil.Join(".", paths[:i]...),
-				paths[i],
-				strutil.Join(".", paths[i+1:]...),
-			)
+		if value != nil {
+			// take out a Map, then continue
+			if value, ok := value.(map[string]any); ok {
+				langMap = value
+				continue
+			}
 		}
+
+		paths[i] = fmt.Sprintf("<%s>", paths[i])
+
+		// can't take out a Map, so we can't continue to walk deeper structure
+		return "", fmt.Errorf(
+			"destination path %s isn't point to a object, can't continue to get value",
+			strutil.Join(".", paths...),
+		)
 	}
 
 	// need some special handling for last one node
 	lastPath := paths[len(paths)-1]
-	value := langMap[lastPath]
+	value := utils.TakeStringMap(&langMap, lastPath)
 	// if value is nil or Map
 	if value == nil || reflect.TypeOf(value).Kind() == reflect.Map {
 		return "", fmt.Errorf(
