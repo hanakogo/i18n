@@ -197,6 +197,22 @@ return res
 //   - a
 //   - b
 i18n.GetSlice[string]("main.list", i18n.ConvertString) // []string{"a", "b"}
+
+// test:
+//   strList:
+//     - abc
+//     - def
+//   numList:
+//     - 1
+//     - 2
+//   objList:
+//     - sublist:
+//       - sublist_element1
+//     - substr: substr
+i18n.GetInt64("test.numList[0]") // 1
+i18n.GetString("test.strList[0]") // "abc"
+i18n.GetString("test.objList[0].sublist[0]") // "sublist_element1"
+i18n.GetString("test.objList[1].substr") // "substr"
 ```
 
 #### Set default value
