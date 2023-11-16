@@ -161,7 +161,7 @@ i18n.HasPath("main.dst", "en", ...) // you can specify some language to check
 ```go
 // main:
 //   format: test %s
-i18n.GetStringF("main.test", "abc") // "test abc" 
+i18n.GetStringF("main.format", "abc") // "test abc" 
 ```
 
 #### Get a value of specific type
