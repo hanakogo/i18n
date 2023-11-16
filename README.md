@@ -1,33 +1,47 @@
 # hanakogo-i18n
-[**hanakogo-i18n**](https://github.com/hanakogo/i18n) is a simple, fast and easy-to-use tool for multi-languages management. Based on `YAML`.
+
+[**hanakogo-i18n**](https://github.com/hanakogo/i18n) is a simple, fast, and user-friendly tool for managing multiple
+languages. It is based on `YAML` files.
 
 ## Features
-- easy to use: simple and clear usage, support multi languages and multi configuration files in any language.
-- clear key: read config item by path which is split by dot, e.g.`main.businessA.str1`.
-- multi type: read `String`,`Int64`,`Float64` from config of language, even **any** type of `Slice`.
-- formatting: support reading config item with format, use regular format specifier.
-- template string: support uses template being like `${refer}`. `refer` is a full path of target item.
-- read mode: support read configs of language from `embed.FS` of golang and traditional filesystem(directory mode).
-- language settings: support default language and fallback language settings.
-- designed with the singleton pattern, without the creation of any struct
+
+- **Easy to Use**: Provides a simple and clear usage interface. Supports multiple languages and configuration files in
+  any language.
+- **Clear Key Structure**: Allows reading configuration items using a dot-separated path, e.g., `main.businessA.str1`.
+- **Multi-Type Support**: Reads `String`, `Int64`, and `Float64` types from language configurations. Supports reading
+  any type of `Slice`.
+- **Formatting Support**: Supports reading configuration items with formatted values using regular format specifiers.
+- **Template String**: Supports using template strings with placeholders, e.g., `${refer}`. The `refer` is a full path
+  to the target item.
+- **Flexible Configuration Sources**: Supports reading language configurations from both `embed.FS` in Golang and
+  traditional file systems (directory mode).
+- **Language Settings**: Allows setting a default language and a fallback language.
+- **Singleton Design**: Designed with the singleton pattern, eliminating the need to create any struct instances.
 
 ## Installation
+
 ```shell
 go get github.com/hanakogo/i18n
 ```
 
 ## Usage
-```shell
+#### Simple File Structure
+
+The following is an example of a simple file structure for language configurations:
+
+```plaintext
 lang/
-    en/
-      main.yaml
-      database.yaml
-      ...
-    zh-CN/
-      main.yaml
-      database.yaml
-      ...
+  en/
+    main.yaml
+    database.yaml
+    ...
+  zh-CN/
+    main.yaml
+    database.yaml
+    ...
 ```
+
+In this structure, language configurations are organized in separate directories based on language codes. Each language directory contains YAML files for different parts of the application, such as `main.yaml` and `database.yaml`.
 
 #### Basic usage
 
@@ -35,70 +49,80 @@ lang/
 package main
 
 import (
-	"embed"
-	"fmt"
-	"github.com/hanakogo/i18n"
-	"github.com/hanakogo/i18n/i18nfs"
+  "embed"
+  "fmt"
+
+  "github.com/hanakogo/i18n"
+  "github.com/hanakogo/i18n/i18nfs"
 )
 
 //go:embed lang
-var testdata embed.FS
+var languageFiles embed.FS
 
 func main() {
-	// initialize
-	err := i18n.Init(i18n.Opts{
-		FSOpts: i18n.FSOpts{
-			// use i18nfs.ModeFileSystem to read from directory
-			FSMode: i18nfs.ModeEmbed,
-			// directory prefix
-			Prefix: "lang",
-			// set EmbedFS if you want to use i18nfs.ModeEmbed
-			EmbedFS: &testdata,
-		},
-		DefaultLang:  "zh-CN",
-		FallbackLang: "en",
-		// languages list to load, DefaultLang and FallbackLang must be contained
-		Languages: []string{
-			"en", "zh-CN",
-		},
-	})
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	
-	// configuration template of current language (DefaultLang):
-	// zh-CN
-	// main:
-	//   title: 测试
-	// en
-	// main:
-	//   title: test
-	//   str1: string one
-	
-	// basic Get[T]() function must specify ConvertFunc used to convert any to the target type
-	// you can use ConvertFunc from package or define it by yourself
-	// default value of Get() and GetTr() is must specified
-	i18n.Get[string]("main.title", i18n.ConvertString, "def") // "test"
-	i18n.Get[string]("main.title.not.exists", i18n.ConvertString, "def") // "def"
-	
-	// this path doesn't exist in language "zh-CN", fallback to language "en"
-	i18n.Get[string]("main.str1", i18n.ConvertString, "def") // "string one"
-	
-	// advanced usage
-	val, err := i18n.GetValue("main.str1") // get any type, for custom usage
+  // Initialize i18n
+  err := i18n.Init(i18n.Opts{
+    FSOpts: i18n.FSOpts{
+      FSMode:   i18nfs.ModeEmbed,
+      Prefix:   "lang",
+      EmbedFS:  &languageFiles,
+    },
+    DefaultLang:  "zh-CN",
+    FallbackLang: "en",
+    Languages: []string{
+      "en", "zh-CN",
+    },
+  })
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+
+  // example data from i18n:
+  // zh-CN (Default)
+  // main:
+  //   title: 测试
+  // en (Fallback)
+  // main:
+  //   title: test
+  //   str1: string one
+
+  // Example usage
+  // Retrieves the translated string for the key "main.title" in the current language.
+  // If the key doesn't exist, fallback to the default value "def".
+  title := i18n.Get[string]("main.title", i18n.ConvertString, "def")
+  fmt.Println(title) // Output: "测试"
+
+  // Retrieve the translated string for the key "main.title.not.exists" in the current language.
+  // Since the key doesn't exist, fallback to the default value "def".
+  notExists := i18n.Get[string]("main.title.not.exists", i18n.ConvertString, "def")
+  fmt.Println(notExists) // Output: "def"
+
+  // Retrieve the translated string for the key "main.str1" in the current language.
+  // If the key doesn't exist in the current language, fallback to the "en" language.
+  str1 := i18n.Get[string]("main.str1", i18n.ConvertString, "def")
+  fmt.Println(str1) // Output: "string one"
+
+  // Advanced usage
+  // Retrieve the value for the key "main.str1" as an interface{}.
+  // This allows retrieving values of any type for custom usage.
+  val, err := i18n.GetValue("main.str1")
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+  fmt.Println(val)
 }
 ```
 
 #### Load language
 
 ```go
-// manual load language
-// must after initialize
+// manual load language after initialized
 err := i18n.Load("common")
 if err != nil {
-	fmt.Println(err)
-	return
+  fmt.Println(err)
+  return
 }
 ```
 
@@ -118,10 +142,10 @@ i18n.FallbackLang = "zh-CN"
 #### Status check
 
 ```go
-// check is initialized
+// check i18n is initialized
 i18n.Initialized()
 
-// reset all status (include loaded language)
+// reset all status (include loaded languages)
 i18n.Reset()
 
 // check language is existing or not
@@ -156,12 +180,12 @@ i18n.GetFloat("main.test") // 12.30000
 // convert any to string
 // main:
 //   test: 12.3
-i18n.Get[string]("main.test", func(value any) string {
-	res, err := mathutil.ToString(value)
-	if err != nil {
-		return ""
-	}
-	return res
+i18n.Get[string]("main.test", func (value any) string {
+res, err := mathutil.ToString(value)
+if err != nil {
+return ""
+}
+return res
 }, "def") // "12.3"
 ```
 
@@ -170,8 +194,8 @@ i18n.Get[string]("main.test", func(value any) string {
 ```go
 // main:
 //   list:
-//     - a
-//     - b
+//   - a
+//   - b
 i18n.GetSlice[string]("main.list", i18n.ConvertString) // []string{"a", "b"}
 ```
 
