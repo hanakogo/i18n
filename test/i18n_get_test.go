@@ -93,10 +93,16 @@ func TestGetMap(t *testing.T) {
 
 	as := assert.New(t)
 
-	value := i18n.Get[map[string]any]("test.map", func(value any) map[string]any {
-		return value.(map[string]any)
+	value := i18n.Get[map[string]string]("test.map", func(value any) map[string]string {
+		val := make(map[string]string)
+		if m, ok := value.(map[string]any); ok {
+			for k, v := range m {
+				val[k] = i18n.ConvertAnyToString(v)
+			}
+		}
+		return val
 	}, nil)
-	as.Eq(map[string]any{
+	as.Eq(map[string]string{
 		"key1": "value1",
 		"key2": "value2",
 	}, value)
