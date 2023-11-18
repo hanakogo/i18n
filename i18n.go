@@ -178,11 +178,11 @@ func GetValue(path string, def ...any) (val any, err error) {
 	return
 }
 
-func Get[T comparable](path string, convertFunc ConvertFunc[T], def T) (val T) {
+func Get[T any](path string, convertFunc ConvertFunc[T], def T) (val T) {
 	value := GetTr[T](DefaultLang, path, convertFunc, def)
-	if value == def {
+	if reflect.DeepEqual(value, def) {
 		value = GetTr[T](FallbackLang, path, convertFunc, def)
-		if value == def {
+		if reflect.DeepEqual(value, def) {
 			return def
 		}
 	}

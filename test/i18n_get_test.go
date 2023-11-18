@@ -93,8 +93,9 @@ func TestGetMap(t *testing.T) {
 
 	as := assert.New(t)
 
-	value, err := i18n.GetValue("test.map", nil)
-	as.Eq(nil, err)
+	value := i18n.Get[map[string]any]("test.map", func(value any) map[string]any {
+		return value.(map[string]any)
+	}, nil)
 	as.Eq(map[string]any{
 		"key1": "value1",
 		"key2": "value2",
