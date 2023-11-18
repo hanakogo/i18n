@@ -88,6 +88,19 @@ func TestMultiLevel(t *testing.T) {
 	)
 }
 
+func TestGetMap(t *testing.T) {
+	TestLoadEmbed(t)
+
+	as := assert.New(t)
+
+	value, err := i18n.GetValue("test.map", nil)
+	as.Eq(nil, err)
+	as.Eq(map[string]any{
+		"key1": "value1",
+		"key2": "value2",
+	}, value)
+}
+
 func TestGetString(t *testing.T) {
 	TestLoadEmbed(t)
 

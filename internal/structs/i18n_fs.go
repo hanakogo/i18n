@@ -10,7 +10,6 @@ import (
 	"github.com/hanakogo/i18n/internal/errors"
 	"github.com/hanakogo/i18n/internal/utils"
 	"gopkg.in/yaml.v3"
-	"reflect"
 )
 
 type I18nFS struct {
@@ -135,7 +134,7 @@ func (i *I18nFS) GetValByPath(lang string, path string) (any, error) {
 	lastPath := paths[len(paths)-1]
 	value := utils.TakeStringMap(&langMap, lastPath)
 	// if value is nil or Map
-	if value == nil || reflect.TypeOf(value).Kind() == reflect.Map {
+	if value == nil {
 		return "", fmt.Errorf(
 			"destination path[%s] isn't point to a value",
 			strutil.Join(".", paths...),

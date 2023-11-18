@@ -74,7 +74,7 @@ func GetValueTr(lang string, path string, def ...any) (val any, err error) {
 	return value, nil
 }
 
-func GetTr[T comparable](lang string, path string, convertFunc ConvertFunc[T], defRes T) (val T) {
+func GetTr[T any](lang string, path string, convertFunc ConvertFunc[T], defRes T) (val T) {
 	value := getAnyOfLang(lang, path)
 	//goland:noinspection GoTypeAssertionOnErrors
 	if _, ok := value.(error); ok {

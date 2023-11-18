@@ -19,6 +19,9 @@ test:
     - sublist:
         - sublist_element1
     - substr: substr
+  map:
+    key1: value1
+    key2: value2
   # 模板字符串测试
   # "测试字符串1:测试"
   temp_test1: 测试字符串1:${test.str1}
